@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import JobList from "./pages/JobList";
 import JobDetail from "./pages/JobDetail";
 import PostJob from "./pages/PostJob";
-
 const App = () => {
   const [jobs, setJobs] = useState([
     {
@@ -21,12 +20,10 @@ const App = () => {
       description: "マーケティング戦略の企画と実行を担当します。",
     },
   ]);
-
   // 新しい求人を追加する関数
   const addJob = (job: (typeof jobs)[0]) => {
     setJobs([...jobs, job]);
   };
-
   return (
     <Router>
       <Routes>
@@ -40,5 +37,4 @@ const App = () => {
     </Router>
   );
 };
-
 export default App;
