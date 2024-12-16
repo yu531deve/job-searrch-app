@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "title": "Webエンジニア",
+    "category": "エンジニア",
+    "salary": 600,
+    "description": "Webサイトの設計・開発を担当します。",
+    "requirements": "React, Node.jsの経験者歓迎。",
+    "company": "Tech株式会社"
+  },
+  {
+    "id": 2,
+    "title": "マーケティングマネージャー",
+    "category": "マーケティング",
+    "salary": 800,
+    "description": "マーケティング戦略の企画と実行を担当します。",
+    "requirements": "デジタルマーケティングの経験。",
+    "company": "マーケット株式会社"
+  },
+  {
+    "id": 3,
+    "title": "営業アシスタント",
+    "category": "営業",
+    "salary": 350,
+    "description": "営業チームのサポート業務。",
+    "requirements": "基本的なPCスキル。",
+    "company": "営業サポート株式会社"
+  }
+]
