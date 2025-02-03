@@ -31,7 +31,7 @@ const App = () => {
     <Router>
       <Routes>
         {/* 求人一覧 */}
-        <Route path="/" element={<JobList jobs={jobs} />} />
+        <Route path="/" element={<JobList />} />
         {/* 求人詳細 */}
         <Route path="/jobs/:id" element={<JobDetail jobs={jobs} />} />
         {/* 求人投稿 */}

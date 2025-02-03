@@ -28,15 +28,37 @@ const PostJob = ({ addJob }: { addJob: (job: Job) => void }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     const newJob: Job = {
-      id: Date.now(),
+      id: Date.now(), // Rails 側で ID を自動生成する場合は削除
       title: formData.title,
       category: formData.category,
       salary: Number(formData.salary),
       description: formData.description,
     };
-    addJob(newJob);
-    navigate("/");
+
+    // 🔽 Rails API にデータを送信する処理を追加
+    fetch("http://localhost:3000/posts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newJob), // JSON 形式で送信
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("投稿に失敗しました");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("投稿成功:", data);
+        addJob(data); // フロントエンドの state にも追加
+        navigate("/");
+      })
+      .catch((error) => {
+        console.error("Error posting job:", error);
+      });
   };
 
   return (

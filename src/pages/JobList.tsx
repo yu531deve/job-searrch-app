@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 type Job = {
@@ -8,10 +8,20 @@ type Job = {
   salary: number;
 };
 
-const JobList = ({ jobs }: { jobs: Job[] }) => {
+const JobList = () => {
+  const [jobs, setJobs] = useState<Job[]>([]); // Rails API から取得したデータを保存するための State
   const [minSalary, setMinSalary] = useState("");
   const [maxSalary, setMaxSalary] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+
+  useEffect(() => {
+    fetch("http://localhost:3000/posts") // Rails API からデータ取得
+      .then((response) => response.json())
+      .then((data) => {
+        setJobs(data); // 既存のデータをクリアしてAPIのデータのみをセット
+      })
+      .catch((error) => console.error("Error fetching jobs:", error));
+  }, []);
 
   const categories = [
     "エンジニア",
