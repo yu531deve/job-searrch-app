@@ -23,10 +23,9 @@ const JobList = () => {
     fetch("http://localhost:3000/posts")
       .then((response) => response.json())
       .then((data) => {
-        // API の is_favorite を isFavorite に変換
         const formattedJobs = data.map((job: any) => ({
           ...job,
-          isFavorite: job.is_favorite, // Railsの `is_favorite` をフロント側の `isFavorite` に変換
+          isFavorite: job.is_favorite ?? false, // null の場合 false にする
         }));
         setJobs(formattedJobs);
         console.log("Updated jobs:", formattedJobs); // デバッグ用
@@ -82,6 +81,29 @@ const JobList = () => {
       );
     } catch (error) {
       console.error("❌ Error updating favorite:", error);
+    }
+  };
+
+  const removeNonFavorites = async () => {
+    try {
+      await fetch("http://localhost:3000/posts", {
+        method: "DELETE",
+      });
+
+      // 削除後に最新のデータを取得
+      const response = await fetch("http://localhost:3000/posts");
+      const updatedJobs = await response.json();
+
+      console.log("削除後のデータ:", updatedJobs); // デバッグ用
+
+      setJobs(
+        updatedJobs.map((job: any) => ({
+          ...job,
+          isFavorite: job.is_favorite, // Railsの `is_favorite` を `isFavorite` に変換
+        }))
+      );
+    } catch (error) {
+      console.error("エラー:", error);
     }
   };
 
@@ -149,6 +171,16 @@ const JobList = () => {
           >
             + 新しい求人を投稿
           </Link>
+        </div>
+
+        {/* 🔽 追加する削除ボタン */}
+        <div className="mt-4 text-center">
+          <button
+            onClick={removeNonFavorites} // 削除処理を実行
+            className="inline-block bg-red-500 text-white font-semibold rounded-full px-4 py-2 hover:bg-red-700 transition shadow-lg"
+          >
+            お気に入り以外を削除
+          </button>
         </div>
       </div>
 

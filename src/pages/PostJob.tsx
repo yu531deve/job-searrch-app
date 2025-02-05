@@ -7,6 +7,7 @@ type Job = {
   category: string;
   salary: number;
   description: string;
+  isFavorite: boolean; // ✅ 追加
 };
 
 const PostJob = ({ addJob }: { addJob: (job: Job) => void }) => {
@@ -16,6 +17,7 @@ const PostJob = ({ addJob }: { addJob: (job: Job) => void }) => {
     category: "",
     salary: "",
     description: "",
+    isFavorite: false, // ✅ 初期値を false に設定
   });
 
   const handleChange = (
@@ -23,27 +25,32 @@ const PostJob = ({ addJob }: { addJob: (job: Job) => void }) => {
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
   ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, type, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]:
+        type === "checkbox" ? (e.target as HTMLInputElement).checked : value, // ✅ 修正
+    });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const newJob: Job = {
+    const newJob = {
       id: Date.now(), // Rails 側で ID を自動生成する場合は削除
       title: formData.title,
       category: formData.category,
       salary: Number(formData.salary),
       description: formData.description,
+      is_favorite: formData.isFavorite, // ✅ Rails API に送るため `is_favorite` に変換
     };
 
-    // 🔽 Rails API にデータを送信する処理を追加
     fetch("http://localhost:3000/posts", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(newJob), // JSON 形式で送信
+      body: JSON.stringify(newJob),
     })
       .then((response) => {
         if (!response.ok) {
@@ -53,7 +60,7 @@ const PostJob = ({ addJob }: { addJob: (job: Job) => void }) => {
       })
       .then((data) => {
         console.log("投稿成功:", data);
-        addJob(data); // フロントエンドの state にも追加
+        addJob(data);
         navigate("/");
       })
       .catch((error) => {
@@ -142,6 +149,20 @@ const PostJob = ({ addJob }: { addJob: (job: Job) => void }) => {
         >
           投稿する
         </button>
+
+        {/* お気に入り登録のチェックボックス */}
+        <div>
+          <label className="flex items-center">
+            <input
+              type="checkbox"
+              name="isFavorite"
+              checked={formData.isFavorite}
+              onChange={handleChange}
+              className="accent-green-500"
+            />
+            お気に入り登録する
+          </label>
+        </div>
       </form>
     </div>
   );
