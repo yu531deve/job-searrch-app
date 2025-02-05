@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faStar as solidStar } from "@fortawesome/free-solid-svg-icons";
+import { faStar as regularStar } from "@fortawesome/free-regular-svg-icons";
 
 type Job = {
   id: number;
   title: string;
   category: string;
   salary: number;
+  description: string;
+  isFavorite: boolean;
 };
 
 const JobList = () => {
@@ -15,10 +20,16 @@ const JobList = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/posts") // Rails API からデータ取得
+    fetch("http://localhost:3000/posts")
       .then((response) => response.json())
       .then((data) => {
-        setJobs(data); // 既存のデータをクリアしてAPIのデータのみをセット
+        // API の is_favorite を isFavorite に変換
+        const formattedJobs = data.map((job: any) => ({
+          ...job,
+          isFavorite: job.is_favorite, // Railsの `is_favorite` をフロント側の `isFavorite` に変換
+        }));
+        setJobs(formattedJobs);
+        console.log("Updated jobs:", formattedJobs); // デバッグ用
       })
       .catch((error) => console.error("Error fetching jobs:", error));
   }, []);
@@ -44,6 +55,35 @@ const JobList = () => {
       selectedCategories.includes(job.category);
     return salaryMatch && categoryMatch;
   });
+
+  const toggleFavorite = async (id: number, isFavorite: boolean) => {
+    console.log(
+      `🔄 toggleFavorite called for job ID: ${id}, current state: ${isFavorite}`
+    );
+
+    try {
+      const response = await fetch(
+        `http://localhost:3000/posts/${id}/toggle_favorite`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ is_favorite: !isFavorite }), // Railsに送るデータ
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to update favorite status");
+
+      console.log("✅ API call successful!");
+
+      setJobs((prevJobs) =>
+        prevJobs.map((job) =>
+          job.id === id ? { ...job, isFavorite: !isFavorite } : job
+        )
+      );
+    } catch (error) {
+      console.error("❌ Error updating favorite:", error);
+    }
+  };
 
   return (
     <div className="flex">
@@ -118,15 +158,27 @@ const JobList = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredJobs.length > 0 ? (
             filteredJobs.map((job) => (
-              <Link
-                to={`/jobs/${job.id}`}
+              <div
                 key={job.id}
-                className="block border rounded-lg shadow hover:shadow-lg transition-all p-4 bg-white"
+                className="relative block border rounded-lg shadow hover:shadow-lg transition-all p-4 bg-white"
               >
-                <h2 className="text-xl font-semibold mb-2">{job.title}</h2>
-                <p className="text-gray-700 mb-1">カテゴリ: {job.category}</p>
-                <p className="text-gray-700">年収: {job.salary}万円</p>
-              </Link>
+                {/* ⭐ お気に入りボタン (カードの右上) */}
+                <button
+                  onClick={() => toggleFavorite(job.id, job.isFavorite)}
+                  className="absolute top-2 right-2 text-yellow-400 text-2xl"
+                >
+                  <FontAwesomeIcon
+                    icon={job.isFavorite ? solidStar : regularStar}
+                  />
+                </button>
+
+                {/* 求人情報をクリックで詳細ページへ */}
+                <Link to={`/jobs/${job.id}`} className="block">
+                  <h2 className="text-xl font-semibold mb-2">{job.title}</h2>
+                  <p className="text-gray-700 mb-1">カテゴリ: {job.category}</p>
+                  <p className="text-gray-700">年収: {job.salary}万円</p>
+                </Link>
+              </div>
             ))
           ) : (
             <p className="text-gray-700 col-span-3 text-center">
