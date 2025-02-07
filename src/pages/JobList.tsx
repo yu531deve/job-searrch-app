@@ -23,6 +23,7 @@ const JobList = () => {
     fetch("http://localhost:3000/posts")
       .then((response) => response.json())
       .then((data) => {
+        console.log("📡 API Response:", JSON.stringify(data, null, 2)); // 🔍 見やすくログ出力
         const formattedJobs = data.map((job: any) => ({
           ...job,
           isFavorite: job.is_favorite ?? false, // null の場合 false にする

@@ -33,7 +33,7 @@ const App = () => {
         {/* 求人一覧 */}
         <Route path="/" element={<JobList />} />
         {/* 求人詳細 */}
-        <Route path="/jobs/:id" element={<JobDetail jobs={jobs} />} />
+        <Route path="/jobs/:id" element={<JobDetail />} />
         {/* 求人投稿 */}
         <Route path="/post" element={<PostJob addJob={addJob} />} />
       </Routes>
