@@ -25,7 +25,9 @@ const JobDetail = () => {
 
     if (!job) {
       setIsLoading(true); // 🔹 ローディング開始
-      fetch(`http://localhost:3000/posts/${id}`)
+      fetch(
+        `https://job-search-backend0531-6b7e45bfe3d5.herokuapp.com/posts/${id}`
+      )
         .then((response) => {
           //ステータスコードをログに入力
           console.log("📡 Response status:", response.status);

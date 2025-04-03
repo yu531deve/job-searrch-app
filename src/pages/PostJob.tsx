@@ -45,7 +45,7 @@ const PostJob = ({ addJob }: { addJob: (job: Job) => void }) => {
       is_favorite: formData.isFavorite, // ✅ Rails API に送るため `is_favorite` に変換
     };
 
-    fetch("http://localhost:3000/posts", {
+    fetch("https://job-search-backend0531-6b7e45bfe3d5.herokuapp.com/posts", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

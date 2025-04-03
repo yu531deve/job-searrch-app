@@ -20,7 +20,7 @@ const JobList = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/posts")
+    fetch("https://job-search-backend0531-6b7e45bfe3d5.herokuapp.com/posts")
       .then((response) => response.json())
       .then((data) => {
         console.log("📡 API Response:", JSON.stringify(data, null, 2)); // 🔍 見やすくログ出力
@@ -63,7 +63,7 @@ const JobList = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/posts/${id}/toggle_favorite`,
+        `https://job-search-backend0531-6b7e45bfe3d5.herokuapp.com/posts/${id}/toggle_favorite`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
@@ -87,12 +87,18 @@ const JobList = () => {
 
   const removeNonFavorites = async () => {
     try {
-      await fetch("http://localhost:3000/posts", {
-        method: "DELETE",
-      });
+      await fetch(
+        "https://job-search-backend0531-6b7e45bfe3d5.herokuapp.com/posts",
+        {
+          method: "DELETE",
+        }
+      );
 
       // 削除後に最新のデータを取得
-      const response = await fetch("http://localhost:3000/posts");
+      const response = await fetch(
+        "https://job-search-backend0531-6b7e45bfe3d5.herokuapp.com/posts"
+      );
+
       const updatedJobs = await response.json();
 
       console.log("削除後のデータ:", updatedJobs); // デバッグ用
